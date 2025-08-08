@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Harga Jual E-Commerce</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0ea5e9">
+    <meta name="description" content="Kalkulator harga jual optimal untuk e-commerce TikTok Shop dan Shopee dengan breakdown biaya lengkap">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Kalkulator E-Commerce">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16x16.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -60,17 +76,33 @@
                                          <div id="platformFees" class="bg-gray-50 rounded-lg p-4">
                          <h3 id="platformTitle" class="text-sm font-medium text-gray-900 mb-2">Fee TikTok Shop</h3>
                          <div id="feeDetails" class="text-sm text-gray-600">
-                             <div class="flex justify-between mb-1">
+                             <div class="flex justify-between items-center mb-2">
                                  <span>Dynamic Fee:</span>
-                                 <span class="font-medium">≈ 5,5%</span>
+                                 <div class="flex items-center space-x-2">
+                                     <input type="number" id="tiktokDynamicFee" value="5.5" min="0" step="0.1" 
+                                            class="w-16 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-white">
+                                     <span class="text-xs text-gray-500">%</span>
+                                 </div>
                              </div>
-                             <div class="flex justify-between mb-1">
+                             <div class="flex justify-between items-center mb-2">
                                  <span>TikTok Fee:</span>
-                                 <span class="font-medium">≈ 8,0%</span>
+                                 <div class="flex items-center space-x-2">
+                                     <input type="number" id="tiktokPlatformFee" value="8.0" min="0" step="0.1" 
+                                            class="w-16 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-white">
+                                     <span class="text-xs text-gray-500">%</span>
+                                 </div>
+                             </div>
+                             <div class="flex justify-between items-center mb-2">
+                                 <span>Biaya Proses:</span>
+                                 <div class="flex items-center space-x-2">
+                                     <input type="number" id="tiktokProcessFee" value="1250" min="0" step="100" 
+                                            class="w-20 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-white">
+                                     <span class="text-xs text-gray-500">Rp</span>
+                                 </div>
                              </div>
                              <div class="flex justify-between pt-2 border-t border-gray-200">
                                  <span class="font-medium">Total Fee:</span>
-                                 <span class="font-bold text-primary-600">≈ 13,5%</span>
+                                 <span id="tiktokTotalFee" class="font-bold text-primary-600">≈ 13,5% + Rp 1.250</span>
                              </div>
                          </div>
                          
@@ -87,6 +119,13 @@
                                      <label for="programVoucher" class="text-xs text-gray-600">Program Voucher Extra (4%)</label>
                                  </div>
                              </div>
+                         </div>
+                         
+                         <!-- Platform Additional Fee Input -->
+                         <div id="platformAdditionalFee" class="mt-4 pt-4 border-t border-gray-200">
+                             <h4 class="text-xs font-medium text-gray-700 mb-2">Biaya Tambahan Platform (%)</h4>
+                             <input type="number" id="platformAdditionalFeeInput" placeholder="Contoh: 2" min="0" step="0.1" value="0"
+                                    class="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white">
                          </div>
                      </div>
                 </div>
@@ -158,6 +197,37 @@
                                     <span class="font-medium">Margin:</span> Keuntungan dihitung dari harga jual
                                 </p>
                             </div>
+                            
+                            <!-- Detail Rumus Perhitungan -->
+                            <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <h4 class="text-xs font-medium text-blue-900 mb-3">Detail Rumus Perhitungan</h4>
+                                <div id="formulaDetails" class="text-xs text-blue-800 space-y-2">
+                                    <div>
+                                        <span class="font-medium">Total Modal:</span> Harga Modal + (Harga Modal × Biaya Tambahan %)
+                                    </div>
+                                    <div>
+                                        <span class="font-medium">Markup:</span> Harga Jual = (Total Modal + Keuntungan + Biaya Proses) ÷ (1 - Total Fee %)
+                                    </div>
+                                    <div>
+                                        <span class="font-medium">Margin:</span> Harga Jual = (Total Modal + Biaya Proses) ÷ (1 - Total Fee % - Keuntungan %)
+                                    </div>
+                                    <div>
+                                        <span class="font-medium">Keuntungan Bersih:</span> Yang Diterima - Total Modal
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3 pt-3 border-t border-blue-200">
+                                    <h5 class="text-xs font-medium text-blue-900 mb-2">Penjelasan Detail:</h5>
+                                    <div class="text-xs text-blue-800 space-y-1">
+                                        <div><span class="font-medium">• Biaya Tambahan:</span> Biaya operasional, packaging, dll yang ditambahkan ke modal</div>
+                                        <div><span class="font-medium">• Markup:</span> Keuntungan dihitung dari total modal (modal + biaya tambahan)</div>
+                                        <div><span class="font-medium">• Margin:</span> Keuntungan dihitung dari harga jual akhir</div>
+                                        <div><span class="font-medium">• Total Fee:</span> Semua biaya platform (Dynamic Fee + TikTok Fee + Affiliate + dll)</div>
+                                        <div><span class="font-medium">• Biaya Proses:</span> Biaya tetap per transaksi (Rp 1.250)</div>
+                                        <div><span class="font-medium">• Yang Diterima:</span> Harga jual dikurangi semua fee platform</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -195,44 +265,78 @@
             const feeDetails = document.getElementById('feeDetails');
             const tiktokAdditionalFees = document.getElementById('tiktokAdditionalFees');
             
+            // Add event listeners for fee inputs after they are created
+            setTimeout(() => {
+                addFeeInputListeners();
+            }, 100);
+            
             if (platform === 'tiktok') {
                 platformTitle.textContent = 'Fee TikTok Shop';
                 feeDetails.innerHTML = `
-                    <div class="flex justify-between mb-1">
+                    <div class="flex justify-between items-center mb-2">
                         <span>Dynamic Fee:</span>
-                        <span class="font-medium">≈ 5,5%</span>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="tiktokDynamicFee" value="5.5" min="0" step="0.1" 
+                                   class="w-16 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-white">
+                            <span class="text-xs text-gray-500">%</span>
+                        </div>
                     </div>
-                    <div class="flex justify-between mb-1">
+                    <div class="flex justify-between items-center mb-2">
                         <span>TikTok Fee:</span>
-                        <span class="font-medium">≈ 8,0%</span>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="tiktokPlatformFee" value="8.0" min="0" step="0.1" 
+                                   class="w-16 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-white">
+                            <span class="text-xs text-gray-500">%</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span>Biaya Proses:</span>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="tiktokProcessFee" value="1250" min="0" step="100" 
+                                   class="w-20 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-white">
+                            <span class="text-xs text-gray-500">Rp</span>
+                        </div>
                     </div>
                     <div class="flex justify-between pt-2 border-t border-gray-200">
                         <span class="font-medium">Total Fee:</span>
-                        <span class="font-bold text-primary-600">≈ 13,5%</span>
+                        <span id="tiktokTotalFee" class="font-bold text-primary-600">≈ 13,5% + Rp 1.250</span>
                     </div>
                 `;
                 tiktokAdditionalFees.classList.remove('hidden');
-            } else if (platform === 'shopee') {
+                        } else if (platform === 'shopee') {
                 platformTitle.textContent = 'Fee Shopee';
                 feeDetails.innerHTML = `
-                    <div class="flex justify-between mb-1">
+                    <div class="flex justify-between items-center mb-2">
                         <span>Biaya Lainnya:</span>
-                        <span class="font-medium">8%</span>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="shopeeBiayaLainnya" value="8" min="0" step="0.1" 
+                                   class="w-16 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-white">
+                            <span class="text-xs text-gray-500">%</span>
+                        </div>
                     </div>
-                    <div class="flex justify-between mb-1">
+                    <div class="flex justify-between items-center mb-2">
                         <span>Biaya Layanan:</span>
-                        <span class="font-medium">7%</span>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="shopeeBiayaLayanan" value="7" min="0" step="0.1" 
+                                   class="w-16 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-white">
+                            <span class="text-xs text-gray-500">%</span>
+                        </div>
                     </div>
-                    <div class="flex justify-between mb-1">
+                    <div class="flex justify-between items-center mb-2">
                         <span>Biaya Proses:</span>
-                        <span class="font-medium">Rp 1.250</span>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="shopeeBiayaProses" value="1250" min="0" step="100" 
+                                   class="w-20 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-white">
+                            <span class="text-xs text-gray-500">Rp</span>
+                        </div>
                     </div>
                     <div class="flex justify-between pt-2 border-t border-gray-200">
                         <span class="font-medium">Total Fee:</span>
-                        <span class="font-bold text-primary-600">15% + Rp 1.250</span>
+                        <span id="shopeeTotalFee" class="font-bold text-primary-600">15% + Rp 1.250</span>
                     </div>
                 `;
                 tiktokAdditionalFees.classList.add('hidden');
+                document.getElementById('platformAdditionalFee').classList.remove('hidden');
             }
         }
 
@@ -244,9 +348,12 @@
             const profit = parseFloat(document.getElementById('profit').value) || 0;
             const method = document.querySelector('input[name="method"]:checked').value;
             
-            // TikTok additional fees
-            const komisiKategori = document.getElementById('komisiKategori').checked ? 4 : 0;
-            const programVoucher = document.getElementById('programVoucher').checked ? 4 : 0;
+                         // TikTok additional fees
+             const komisiKategori = document.getElementById('komisiKategori').checked ? 4 : 0;
+             const programVoucher = document.getElementById('programVoucher').checked ? 4 : 0;
+             
+             // Platform additional fee
+             const platformAdditionalFee = parseFloat(document.getElementById('platformAdditionalFeeInput').value) || 0;
 
             if (modalPrice <= 0) {
                 alert('Mohon masukkan harga modal yang valid!');
@@ -259,19 +366,26 @@
             const totalModalCost = modalPrice + additionalCostAmount;
             
             if (platform === 'tiktok') {
+                // Get editable fee values
+                const dynamicFeeRate = parseFloat(document.getElementById('tiktokDynamicFee')?.value) || 5.5;
+                const platformFeeRate = parseFloat(document.getElementById('tiktokPlatformFee')?.value) || 8.0;
+                const processFee = parseFloat(document.getElementById('tiktokProcessFee')?.value) || 1250;
+                
                 if (method === 'markup') {
                     const profitAmount = totalModalCost * (profit / 100);
                     const targetReceived = totalModalCost + profitAmount;
                     
-                    const totalFeeRate = (5.5 + 8.0 + affiliateFee + komisiKategori + programVoucher) / 100;
-                    const sellingPrice = targetReceived / (1 - totalFeeRate);
+                    const totalFeeRate = (dynamicFeeRate + platformFeeRate + affiliateFee + komisiKategori + programVoucher + platformAdditionalFee) / 100;
+                    const sellingPrice = (targetReceived + processFee) / (1 - totalFeeRate);
                     
-                    const dynamicFee = sellingPrice * 0.055;
-                    const platformFee = sellingPrice * 0.08;
+                    const dynamicFee = sellingPrice * (dynamicFeeRate / 100);
+                    const platformFee = sellingPrice * (platformFeeRate / 100);
+                    const biayaProses = processFee;
                     const affiliateCost = sellingPrice * (affiliateFee / 100);
                     const komisiKategoriCost = sellingPrice * (komisiKategori / 100);
                     const programVoucherCost = sellingPrice * (programVoucher / 100);
-                    const totalFees = dynamicFee + platformFee + affiliateCost + komisiKategoriCost + programVoucherCost;
+                    const platformAdditionalCost = sellingPrice * (platformAdditionalFee / 100);
+                    const totalFees = dynamicFee + platformFee + biayaProses + affiliateCost + komisiKategoriCost + programVoucherCost + platformAdditionalCost;
                     const netReceived = sellingPrice - totalFees;
                     const actualProfit = netReceived - totalModalCost;
                     
@@ -284,27 +398,32 @@
                         sellingPrice,
                         dynamicFee,
                         platformFee,
+                        biayaProses,
                         affiliateCost,
                         komisiKategoriCost,
                         programVoucherCost,
+                        platformAdditionalCost,
                         totalFees,
                         netReceived,
                         actualProfit,
-                        fixedFee: 0,
+                        fixedFee: 1250,
                         komisiKategori,
-                        programVoucher
+                        programVoucher,
+                        platformAdditionalFee
                     };
                 } else {
-                    const totalFeeRate = (5.5 + 8.0 + affiliateFee + komisiKategori + programVoucher) / 100;
+                    const totalFeeRate = (dynamicFeeRate + platformFeeRate + affiliateFee + komisiKategori + programVoucher + platformAdditionalFee) / 100;
                     const profitMargin = profit / 100;
-                    const sellingPrice = totalModalCost / (1 - totalFeeRate - profitMargin);
+                    const sellingPrice = (totalModalCost + processFee) / (1 - totalFeeRate - profitMargin);
                     
-                    const dynamicFee = sellingPrice * 0.055;
-                    const platformFee = sellingPrice * 0.08;
+                    const dynamicFee = sellingPrice * (dynamicFeeRate / 100);
+                    const platformFee = sellingPrice * (platformFeeRate / 100);
+                    const biayaProses = processFee;
                     const affiliateCost = sellingPrice * (affiliateFee / 100);
                     const komisiKategoriCost = sellingPrice * (komisiKategori / 100);
                     const programVoucherCost = sellingPrice * (programVoucher / 100);
-                    const totalFees = dynamicFee + platformFee + affiliateCost + komisiKategoriCost + programVoucherCost;
+                    const platformAdditionalCost = sellingPrice * (platformAdditionalFee / 100);
+                    const totalFees = dynamicFee + platformFee + biayaProses + affiliateCost + komisiKategoriCost + programVoucherCost + platformAdditionalCost;
                     const netReceived = sellingPrice - totalFees;
                     const actualProfit = netReceived - totalModalCost;
                     
@@ -317,15 +436,18 @@
                         sellingPrice,
                         dynamicFee,
                         platformFee,
+                        biayaProses,
                         affiliateCost,
                         komisiKategoriCost,
                         programVoucherCost,
+                        platformAdditionalCost,
                         totalFees,
                         netReceived,
                         actualProfit,
-                        fixedFee: 0,
+                        fixedFee: 1250,
                         komisiKategori,
-                        programVoucher
+                        programVoucher,
+                        platformAdditionalFee
                     };
                 }
             } else if (platform === 'shopee') {
@@ -336,14 +458,15 @@
                     const profitAmount = totalModalCost * (profit / 100);
                     const targetReceived = totalModalCost + profitAmount;
                     
-                    const percentageFeeRate = (8 + 7 + shopeeAffiliateFee) / 100;
+                    const percentageFeeRate = (8 + 7 + shopeeAffiliateFee + platformAdditionalFee) / 100;
                     const sellingPrice = (targetReceived + 1250) / (1 - percentageFeeRate);
                     
                     const biayaLainnya = sellingPrice * 0.08;
                     const biayaLayanan = sellingPrice * 0.07;
                     const biayaProses = 1250;
                     const affiliateCost = sellingPrice * (shopeeAffiliateFee / 100);
-                    const totalFees = biayaLainnya + biayaLayanan + biayaProses + affiliateCost;
+                    const platformAdditionalCost = sellingPrice * (platformAdditionalFee / 100);
+                    const totalFees = biayaLainnya + biayaLayanan + biayaProses + affiliateCost + platformAdditionalCost;
                     const netReceived = sellingPrice - totalFees;
                     const actualProfit = netReceived - totalModalCost;
                     
@@ -358,22 +481,25 @@
                         biayaLayanan,
                         biayaProses,
                         affiliateCost,
+                        platformAdditionalCost,
                         totalFees,
                         netReceived,
                         actualProfit,
                         fixedFee: 1250,
-                        shopeeAffiliateFee: shopeeAffiliateFee
+                        shopeeAffiliateFee: shopeeAffiliateFee,
+                        platformAdditionalFee
                     };
                 } else {
                     const profitMargin = profit / 100;
-                    const percentageFeeRate = (8 + 7 + shopeeAffiliateFee) / 100;
+                    const percentageFeeRate = (8 + 7 + shopeeAffiliateFee + platformAdditionalFee) / 100;
                     const sellingPrice = (totalModalCost + 1250) / (1 - percentageFeeRate - profitMargin);
                     
                     const biayaLainnya = sellingPrice * 0.08;
                     const biayaLayanan = sellingPrice * 0.07;
                     const biayaProses = 1250;
                     const affiliateCost = sellingPrice * (shopeeAffiliateFee / 100);
-                    const totalFees = biayaLainnya + biayaLayanan + biayaProses + affiliateCost;
+                    const platformAdditionalCost = sellingPrice * (platformAdditionalFee / 100);
+                    const totalFees = biayaLainnya + biayaLayanan + biayaProses + affiliateCost + platformAdditionalCost;
                     const netReceived = sellingPrice - totalFees;
                     const actualProfit = netReceived - totalModalCost;
                     
@@ -388,11 +514,13 @@
                         biayaLayanan,
                         biayaProses,
                         affiliateCost,
+                        platformAdditionalCost,
                         totalFees,
                         netReceived,
                         actualProfit,
                         fixedFee: 1250,
-                        shopeeAffiliateFee: shopeeAffiliateFee
+                        shopeeAffiliateFee: shopeeAffiliateFee,
+                        platformAdditionalFee
                     };
                 }
             }
@@ -407,14 +535,21 @@
             let feeBreakdown = '';
             
             if (results.platform === 'TikTok Shop') {
+                const dynamicFeeRate = parseFloat(document.getElementById('tiktokDynamicFee')?.value) || 5.5;
+                const platformFeeRate = parseFloat(document.getElementById('tiktokPlatformFee')?.value) || 8.0;
+                
                 feeBreakdown = `
                     <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span class="text-sm text-gray-600">Dynamic Fee (5.5%)</span>
+                        <span class="text-sm text-gray-600">Dynamic Fee (${dynamicFeeRate}%)</span>
                         <span class="font-medium text-gray-900">${formatRupiah(results.dynamicFee)}</span>
                     </div>
                     <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                        <span class="text-sm text-gray-600">TikTok Fee (8.0%)</span>
+                        <span class="text-sm text-gray-600">TikTok Fee (${platformFeeRate}%)</span>
                         <span class="font-medium text-gray-900">${formatRupiah(results.platformFee)}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="text-sm text-gray-600">Biaya Proses Pesanan</span>
+                        <span class="font-medium text-gray-900">${formatRupiah(results.biayaProses)}</span>
                     </div>
                 `;
                 
@@ -436,6 +571,15 @@
                         </div>
                     `;
                 }
+                
+                if (results.platformAdditionalFee > 0) {
+                    feeBreakdown += `
+                        <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                            <span class="text-sm text-gray-600">Biaya Tambahan Platform (${results.platformAdditionalFee}%)</span>
+                            <span class="font-medium text-gray-900">${formatRupiah(results.platformAdditionalCost)}</span>
+                        </div>
+                    `;
+                }
             } else if (results.platform === 'Shopee') {
                 feeBreakdown = `
                     <div class="flex justify-between items-center py-3 border-b border-gray-100">
@@ -451,6 +595,15 @@
                         <span class="font-medium text-gray-900">${formatRupiah(results.biayaProses)}</span>
                     </div>
                 `;
+                
+                if (results.platformAdditionalFee > 0) {
+                    feeBreakdown += `
+                        <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                            <span class="text-sm text-gray-600">Biaya Tambahan Platform (${results.platformAdditionalFee}%)</span>
+                            <span class="font-medium text-gray-900">${formatRupiah(results.platformAdditionalCost)}</span>
+                        </div>
+                    `;
+                }
             }
             
             breakdown.innerHTML = `
@@ -486,6 +639,47 @@
                     </div>
                 </div>
 
+                <!-- Cost Breakdown -->
+                <div class="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+                    <h3 class="text-sm font-medium text-gray-900 mb-3">Breakdown Biaya Modal</h3>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="text-sm text-gray-600">Harga Modal Dasar</span>
+                        <span class="font-medium text-gray-900">${formatRupiah(results.modalPrice)}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="text-sm text-gray-600">Biaya Tambahan (${parseFloat(document.getElementById('additionalCost').value) || 0}%)</span>
+                        <span class="font-medium text-gray-900">${formatRupiah(results.additionalCostAmount)}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 bg-gray-50 rounded-lg px-3">
+                        <span class="text-sm font-medium text-gray-900">Total Modal + Biaya</span>
+                        <span class="font-bold text-gray-900">${formatRupiah(results.totalModalCost)}</span>
+                    </div>
+                </div>
+
+                <!-- Profit Breakdown -->
+                <div class="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+                    <h3 class="text-sm font-medium text-gray-900 mb-3">Breakdown Keuntungan</h3>
+                    ${method === 'markup' ? `
+                        <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                            <span class="text-sm text-gray-600">Target Keuntungan (${parseFloat(document.getElementById('profit').value) || 0}% dari modal)</span>
+                            <span class="font-medium text-gray-900">${formatRupiah(results.profitAmount)}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 bg-gray-50 rounded-lg px-3">
+                            <span class="text-sm font-medium text-gray-900">Target Yang Diterima</span>
+                            <span class="font-bold text-gray-900">${formatRupiah(results.totalModalCost + results.profitAmount)}</span>
+                        </div>
+                    ` : `
+                        <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                            <span class="text-sm text-gray-600">Target Keuntungan (${parseFloat(document.getElementById('profit').value) || 0}% dari harga jual)</span>
+                            <span class="font-medium text-gray-900">${formatRupiah(results.sellingPrice * (parseFloat(document.getElementById('profit').value) || 0) / 100)}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 bg-gray-50 rounded-lg px-3">
+                            <span class="text-sm font-medium text-gray-900">Target Yang Diterima</span>
+                            <span class="font-bold text-gray-900">${formatRupiah(results.sellingPrice * (1 - (parseFloat(document.getElementById('profit').value) || 0) / 100))}</span>
+                        </div>
+                    `}
+                </div>
+
                 <!-- Fee Breakdown -->
                 <div class="bg-white border border-gray-200 rounded-lg p-4 mb-6">
                     <h3 class="text-sm font-medium text-gray-900 mb-3">Breakdown Biaya Platform</h3>
@@ -519,11 +713,68 @@
                          document.getElementById('results').classList.remove('hidden');
          }
          
+         function addFeeInputListeners() {
+             // TikTok fee inputs
+             const tiktokDynamicFee = document.getElementById('tiktokDynamicFee');
+             const tiktokPlatformFee = document.getElementById('tiktokPlatformFee');
+             const tiktokProcessFee = document.getElementById('tiktokProcessFee');
+             
+             if (tiktokDynamicFee) {
+                 tiktokDynamicFee.addEventListener('input', updateTikTokTotalFee);
+                 tiktokPlatformFee.addEventListener('input', updateTikTokTotalFee);
+                 tiktokProcessFee.addEventListener('input', updateTikTokTotalFee);
+             }
+             
+             // Shopee fee inputs
+             const shopeeBiayaLainnya = document.getElementById('shopeeBiayaLainnya');
+             const shopeeBiayaLayanan = document.getElementById('shopeeBiayaLayanan');
+             const shopeeBiayaProses = document.getElementById('shopeeBiayaProses');
+             
+             if (shopeeBiayaLainnya) {
+                 shopeeBiayaLainnya.addEventListener('input', updateShopeeTotalFee);
+                 shopeeBiayaLayanan.addEventListener('input', updateShopeeTotalFee);
+                 shopeeBiayaProses.addEventListener('input', updateShopeeTotalFee);
+             }
+         }
+         
+         function updateTikTokTotalFee() {
+             const dynamicFee = parseFloat(document.getElementById('tiktokDynamicFee')?.value) || 5.5;
+             const platformFee = parseFloat(document.getElementById('tiktokPlatformFee')?.value) || 8.0;
+             const processFee = parseFloat(document.getElementById('tiktokProcessFee')?.value) || 1250;
+             
+             const totalFeeElement = document.getElementById('tiktokTotalFee');
+             if (totalFeeElement) {
+                 totalFeeElement.textContent = `≈ ${(dynamicFee + platformFee).toFixed(1)}% + Rp ${processFee.toLocaleString('id-ID')}`;
+             }
+         }
+         
+         function updateShopeeTotalFee() {
+             const biayaLainnya = parseFloat(document.getElementById('shopeeBiayaLainnya')?.value) || 8;
+             const biayaLayanan = parseFloat(document.getElementById('shopeeBiayaLayanan')?.value) || 7;
+             const biayaProses = parseFloat(document.getElementById('shopeeBiayaProses')?.value) || 1250;
+             
+             const totalFeeElement = document.getElementById('shopeeTotalFee');
+             if (totalFeeElement) {
+                 totalFeeElement.textContent = `${biayaLainnya + biayaLayanan}% + Rp ${biayaProses.toLocaleString('id-ID')}`;
+             }
+         }
+         
          // Initialize page
          document.addEventListener('DOMContentLoaded', function() {
              // Call updatePlatformFees to set initial state
              updatePlatformFees();
+             
+             // Register Service Worker for PWA
+             if ('serviceWorker' in navigator) {
+                 navigator.serviceWorker.register('sw.js')
+                     .then(function(registration) {
+                         console.log('Service Worker registered successfully:', registration);
+                     })
+                     .catch(function(error) {
+                         console.log('Service Worker registration failed:', error);
+                     });
+             }
          });
      </script>
-</body>
-</html>
+ </body>
+ </html>
