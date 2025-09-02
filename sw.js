@@ -1,9 +1,14 @@
 const CACHE_NAME = 'kalkulator-ecommerce-v1';
 const urlsToCache = [
   '/',
-  '/apps.html',
+  '/hitung.html',
   '/index.html',
+  'icons/icon-16x16.png',
+  'icons/icon-32x32.png',
+  'icons/icon-144x144.png',
+  '/hitung.js',
   '/manifest.json',
+  'css/tailwind.min.css',
   'https://cdn.tailwindcss.com'
 ];
 
