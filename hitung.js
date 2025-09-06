@@ -95,6 +95,7 @@
             const affiliateFee = parseFloat(document.getElementById('affiliateFee').value) || 0;
             const additionalCost = parseFloat(document.getElementById('additionalCost').value) || 0;
             const profit = parseFloat(document.getElementById('profit').value) || 0;
+            const fakePricePercentage = parseFloat(document.getElementById('fakePrice').value) || 80;
             const method = document.querySelector('input[name="method"]:checked').value;
             
                          // TikTok additional fees
@@ -158,7 +159,9 @@
                         fixedFee: 1250,
                         komisiKategori,
                         programVoucher,
-                        platformAdditionalFee
+                        platformAdditionalFee,
+                        fakePricePercentage,
+                        fakePrice: sellingPrice / (1 - fakePricePercentage / 100)
                     };
                 } else {
                     const totalFeeRate = (dynamicFeeRate + platformFeeRate + affiliateFee + komisiKategori + programVoucher + platformAdditionalFee) / 100;
@@ -196,7 +199,9 @@
                         fixedFee: 1250,
                         komisiKategori,
                         programVoucher,
-                        platformAdditionalFee
+                        platformAdditionalFee,
+                        fakePricePercentage,
+                        fakePrice: sellingPrice / (1 - fakePricePercentage / 100)
                     };
                 }
             } else if (platform === 'shopee') {
@@ -236,7 +241,9 @@
                         actualProfit,
                         fixedFee: 1250,
                         shopeeAffiliateFee: shopeeAffiliateFee,
-                        platformAdditionalFee
+                        platformAdditionalFee,
+                        fakePricePercentage,
+                        fakePrice: sellingPrice / (1 - fakePricePercentage / 100)
                     };
                 } else {
                     const profitMargin = profit / 100;
@@ -269,7 +276,9 @@
                         actualProfit,
                         fixedFee: 1250,
                         shopeeAffiliateFee: shopeeAffiliateFee,
-                        platformAdditionalFee
+                        platformAdditionalFee,
+                        fakePricePercentage,
+                        fakePrice: sellingPrice / (1 - fakePricePercentage / 100)
                     };
                 }
             }
@@ -392,6 +401,35 @@
                             </button>
                         </div>
                         <p class="text-sm text-primary-700 mt-1">${results.platform} • ${method.charAt(0).toUpperCase() + method.slice(1)}</p>
+                    </div>
+                </div>
+
+                <!-- Fake/Cross-out Price for TikTok -->
+                <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+                    <div class="text-center">
+                        <h3 class="text-lg font-semibold text-red-900 mb-3">Harga untuk Posting TikTok</h3>
+                        <div class="space-y-2">
+                            <div class="text-center">
+                                <span class="text-xl text-red-600 line-through font-medium">${formatRupiah(results.fakePrice)}</span>
+                                <span class="text-xs text-red-600 ml-2">Harga Coret</span>
+                            </div>
+                            <div class="text-center">
+                                <span class="text-2xl font-bold text-green-600">${formatRupiah(results.sellingPrice)}</span>
+                                <span class="text-xs text-green-600 ml-2">Harga Diskon</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 bg-white rounded-lg p-3 border border-red-200">
+                            <p class="text-sm text-red-800 font-medium">💡 Tips Marketing:</p>
+                            <p class="text-xs text-red-700 mt-1">
+                                Gunakan harga coret <span class="font-semibold">${formatRupiah(results.fakePrice)}</span>
+                                di posting TikTok, lalu berikan "diskon" ke harga optimal
+                                <span class="font-semibold">${formatRupiah(results.sellingPrice)}</span>
+                            </p>
+                            <p class="text-xs text-red-600 mt-2 font-medium">
+                                Diskon: ${Math.round((results.fakePrice - results.sellingPrice) / results.fakePrice * 100)}%
+                                (Hemat ${formatRupiah(results.fakePrice - results.sellingPrice)})
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -539,6 +577,7 @@
              const modalPrice = parseFloat(document.getElementById('modalPrice').value) || 0;
              const affiliateFee = parseFloat(document.getElementById('affiliateFee').value) || 0;
              const additionalCost = parseFloat(document.getElementById('additionalCost').value) || 0;
+             const fakePricePercentage = parseFloat(document.getElementById('fakePrice').value) || 80;
              const method = document.querySelector('input[name="method"]:checked').value;
              
              // TikTok additional fees
@@ -609,7 +648,9 @@
                      fixedFee: 1250,
                      komisiKategori,
                      programVoucher,
-                     platformAdditionalFee
+                     platformAdditionalFee,
+                     fakePricePercentage,
+                     fakePrice: newSellingPrice / (1 - fakePricePercentage / 100)
                  };
              } else if (platform === 'shopee') {
                  // Shopee: affiliate fee ditambah 5% dari input user
@@ -656,7 +697,9 @@
                      actualProfit,
                      fixedFee: 1250,
                      shopeeAffiliateFee: shopeeAffiliateFee,
-                     platformAdditionalFee
+                     platformAdditionalFee,
+                     fakePricePercentage,
+                     fakePrice: newSellingPrice / (1 - fakePricePercentage / 100)
                  };
              }
              
